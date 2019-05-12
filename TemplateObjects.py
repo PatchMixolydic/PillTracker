@@ -2,12 +2,17 @@ from gi.repository import Gtk
 import BuilderObject
 
 class PillFrame(BuilderObject.BuilderObject):
-    def __init__(self):
+    def __init__(self, pill, tracker):
         super().__init__("pill_template")
         self.frame = self.builder.get_object("pill_frame")
+        self.name = self.builder.get_object("pill_name")
+        self.time_tracker_container = self.builder.get_object("pill_time_track_container")
+        self.tracker = tracker
+        self.name.set_text(pill.name)
 
     def on_pill_edit_clicked(self, widget):
-        NotImplemented
+        pill_edit = PillEdit.PillEdit(self.tracker)
+        pill_edit.window.show_all()
 
 class TimeTracker(BuilderObject.BuilderObject):
     def __init__(self):
@@ -20,7 +25,7 @@ class TimeTracker(BuilderObject.BuilderObject):
         NotImplemented
 
 class TimeEditor(BuilderObject.BuilderObject):
-    def __init__(self, container):
+    def __init__(self, pill_editor):
         super().__init__("time_edit_template")
         self.time_edit = self.builder.get_object("time_edit")
         self.select_hour = self.builder.get_object("time_select_hour")
@@ -28,7 +33,7 @@ class TimeEditor(BuilderObject.BuilderObject):
         self.select_ampm = self.builder.get_object("time_select_ampm")
         self.name_entry = self.builder.get_object("time_name_entry")
         self.notification_checkbox = self.builder.get_object("time_notification_checkbox")
-        self.container = container
+        self.pill_editor = pill_editor
         self.prev_and_curr_minute_values = [0, 0] # previous, current
 
     def on_time_select_hour_output(self, widget):
@@ -63,5 +68,5 @@ class TimeEditor(BuilderObject.BuilderObject):
             raise ValueError("time_select_minute wrapped at unusual value {}!".format(self.prev_and_curr_minute_values[0]))
 
     def on_time_remove_button_clicked(self, widget):
-        self.container.remove(self.time_edit)
-        self = None
+        self.pill_editor.time_edit_container.remove(self.time_edit)
+        self.pill_editor.time_editors.remove(self)
