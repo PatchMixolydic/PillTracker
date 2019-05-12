@@ -1,10 +1,11 @@
 PMOffset = 12  # hours
 
 class Time:
-    def __init__(self, hour, minute):
+    def __init__(self, hour, minute, notifications = True):
         # hour is 24 hour representation, 0-23
         self.hour = hour
         self.minute = minute
+        self.notifications = notifications
 
     @staticmethod
     def from_time_editor(self, time_editor):
@@ -15,7 +16,8 @@ class Time:
         if time_editor.select_ampm.get_active_id() == "pm":
             hour += PMOffset
         minute = int(time_editor.select_minute.get_value())
-        return Time(hour, minute)
+        notifications = time_editor.notification_checkbox.get_active()
+        return Time(hour, minute, notifications)
 
 class Pill:
     def __init__(self, name, times):
