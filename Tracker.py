@@ -18,6 +18,7 @@ class Tracker(BuilderObject.BuilderObject):
 
     def on_add_pill_button_clicked(self, widget):
         pill_edit = PillEdit.PillEdit(self)
+        pill_edit.new_mode()
         pill_edit.window.show_all()
 
     def on_date_menu_select_activate(self, widget):
