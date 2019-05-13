@@ -1,5 +1,5 @@
 from gi.repository import Gtk
-import BuilderObject
+import BuilderObject, PillData, PillEdit
 
 class PillFrame(BuilderObject.BuilderObject):
     def __init__(self, pill, tracker):
@@ -8,10 +8,11 @@ class PillFrame(BuilderObject.BuilderObject):
         self.name = self.builder.get_object("pill_name")
         self.time_tracker_container = self.builder.get_object("pill_time_track_container")
         self.tracker = tracker
-        self.name.set_text(pill.name)
+        self.pill = pill
+        self.name.set_text(self.pill.name)
 
     def on_pill_edit_clicked(self, widget):
-        pill_edit = PillEdit.PillEdit(self.tracker)
+        pill_edit = PillEdit.PillEdit(self.tracker, self.pill)
         pill_edit.window.show_all()
 
 class TimeTracker(BuilderObject.BuilderObject):
@@ -35,6 +36,19 @@ class TimeEditor(BuilderObject.BuilderObject):
         self.notification_checkbox = self.builder.get_object("time_notification_checkbox")
         self.pill_editor = pill_editor
         self.prev_and_curr_minute_values = [0, 0] # previous, current
+
+    @staticmethod
+    def from_time(time, pill_editor):
+        res = TimeEditor(pill_editor)
+        hour = time.hour # Get local copy so we don't edit the time
+        if hour >= PillData.Time.PMOffset:
+            hour -= PillData.Time.PMOffset
+            res.select_ampm.set_active_id("pm")
+        res.select_hour.set_value(hour)
+        res.select_minute.set_value(time.minute)
+        res.name_entry.set_text(time.name)
+        res.notification_checkbox.set_active(time.notifications)
+        return res
 
     def on_time_select_hour_output(self, widget):
         hour = int(self.select_hour.get_value())

@@ -45,7 +45,7 @@ class Tracker(BuilderObject.BuilderObject):
         if pillWidget is not None: # If there was a widget, remove it
             self.pills_container.remove(pillWidget)
             pillWidget = None
-        if len(pills) == 0:
+        if len(self.pills) == 0:
             self.pills_container.add(self.no_pills_label)
         self.save_pills()
 

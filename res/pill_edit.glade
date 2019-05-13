@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkDialog" id="pill_edit_window">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Editing pill</property>
+    <property name="title" translatable="yes">Edit pill</property>
     <property name="modal">True</property>
     <property name="default_width">320</property>
     <property name="default_height">260</property>
@@ -18,7 +18,7 @@
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkButtonBox">
+          <object class="GtkButtonBox" id="pill_edit_buttons_container">
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
