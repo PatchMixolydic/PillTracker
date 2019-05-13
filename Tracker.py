@@ -6,6 +6,8 @@ if sys.platform == 'linux':
     import notifications.LinuxNotifications as Notifications
 elif sys.platform == 'win32':
     import notifications.Win32Notifications as Notifications
+elif sys.platform == 'darwin':
+    import notifications.DarwinNotifications as Notifications
 else:
     import notifications.DummyNotifications as Notifications
 

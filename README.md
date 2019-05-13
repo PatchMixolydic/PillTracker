@@ -15,9 +15,10 @@ as the gold standard for UI programming!
 Dependencies include
 [pycairo, PyGObject](https://pygobject.readthedocs.io/en/latest/getting_started.html),
 and [pyyaml](https://pyyaml.org/wiki/PyYAMLDocumentation). Additionally, Linux
-users will need [notify2](https://pypi.org/project/notify2/) and Windows users
+users will need [notify2](https://pypi.org/project/notify2/), Windows users
 will need [win10toast](https://github.com/jithurjacob/Windows-10-Toast-Notifications)
-and its dependencies for notifications.
+and its dependencies for notifications, and macOS users will need
+[pyobjc](https://pypi.org/project/pyobjc/)
 
 ## Usage
 To run the application, simply run main.py with Python 3. Save data is stored in
