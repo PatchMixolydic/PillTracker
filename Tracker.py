@@ -1,4 +1,4 @@
-import datetime, os, sys, yaml
+import datetime, os, sys, threading, yaml
 from gi.repository import Gtk
 import BuilderObject, DatePicker, PillEdit, TemplateObjects
 
@@ -16,6 +16,7 @@ class Tracker(BuilderObject.BuilderObject):
         self.pill_to_widget = {}
         self.load_pills()
         self.set_date(datetime.date.today())
+        self.launch_time_check_thread(0.1)
 
     def on_tracker_window_destroy(self, widget):
         Gtk.main_quit()
@@ -39,7 +40,7 @@ class Tracker(BuilderObject.BuilderObject):
             widget = self.pill_to_widget.get(pill, None)
             if widget is None:
                 continue
-            for time_tracker in widget.time_trackers:
+            for time_tracker in widget.time_trackers.values():
                 dates_taken = pill.dates_taken[time_tracker.time.get_hour_minute()]
                 time_tracker.checkbox.set_active(self.date in dates_taken)
         self.save_pills()
@@ -79,3 +80,37 @@ class Tracker(BuilderObject.BuilderObject):
                 for pill in yaml.safe_load(save_data):
                     print(pill)
                     self.add_pill(pill)
+
+    def time_check(self):
+        today = datetime.date.today()
+        if self.date != today and today - datetime.timedelta(days = 1) == self.date:
+            self.set_date(today)
+        now = datetime.datetime.now().time()
+        for pill in self.pills:
+            widget = self.pill_to_widget.get(pill)
+            for time in pill.times:
+                time_tracker = None
+                if widget is not None:
+                    time_tracker = widget.time_trackers.get(time.get_hour_minute())
+                if now >= time.get_datetime_time():
+                    if today in pill.dates_taken[time.get_hour_minute()]:
+                        # We've taken this pill.
+                        if time_tracker is not None:
+                            time_tracker.alert.set_visible(False)
+                    else:
+                        # uh oh!
+                        if time.notifications and not time_tracker.alert.get_visible():
+                            # send a notification!
+                            print("notification!")
+                        if time_tracker is not None:
+                            time_tracker.alert.set_visible(True)
+                else:
+                    # It's not time to take this yet.
+                    if time_tracker is not None:
+                        time_tracker.alert.set_visible(False)
+        self.launch_time_check_thread(0.25)
+
+    def launch_time_check_thread(self, time):
+        thread = threading.Timer(time, self.time_check)
+        thread.daemon = True
+        thread.start()

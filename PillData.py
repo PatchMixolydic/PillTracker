@@ -1,4 +1,4 @@
-import yaml
+import datetime, yaml
 
 class YAMLSafeDefaultListDict(yaml.YAMLObject):
     yaml_tag = "!defaultdict"
@@ -35,6 +35,12 @@ class Time(yaml.YAMLObject):
         :return: "hour:minute" representation
         """
         return "{}:{:02d}".format(self.hour, self.minute)
+
+    def get_datetime_time(self):
+        """
+        :return: datetime.time representation of this Time
+        """
+        return datetime.time(hour = self.hour, minute = self.minute)
 
     @staticmethod
     def from_time_editor(time_editor):

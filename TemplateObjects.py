@@ -9,20 +9,20 @@ class PillFrame(BuilderObject.BuilderObject):
         self.time_tracker_container = self.builder.get_object("pill_time_track_container")
         self.tracker = tracker
         self.pill = pill
-        self.time_trackers = []
+        self.time_trackers = {}
         self.setup_from_pill_values()
 
     def setup_from_pill_values(self):
         # First, clear out any time trackers which may already be here
-        for time_tracker in self.time_trackers:
+        for time_tracker in self.time_trackers.values():
             self.time_tracker_container.remove(time_tracker.checkbox)
             time_tracker = None
-        self.time_trackers = []
+        self.time_trackers = {}
         # Now, fill in the new trackers
         for time in self.pill.times:
             time_tracker = TimeTracker(time, self.pill, self.tracker)
             self.time_tracker_container.add(time_tracker.checkbox)
-            self.time_trackers.append(time_tracker)
+            self.time_trackers[time.get_hour_minute()] = time_tracker
             dates_taken = self.pill.dates_taken[time_tracker.time.get_hour_minute()]
             time_tracker.checkbox.set_active(self.tracker.date in dates_taken)
         self.name.set_text(self.pill.name)
