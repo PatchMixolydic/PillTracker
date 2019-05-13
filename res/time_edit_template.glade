@@ -118,6 +118,7 @@
             <property name="receives_default">False</property>
             <property name="halign">center</property>
             <property name="hexpand">True</property>
+            <property name="active">True</property>
             <property name="draw_indicator">True</property>
           </object>
           <packing>
