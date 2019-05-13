@@ -24,6 +24,9 @@ class PillEdit(BuilderObject.BuilderObject):
         self.window.set_title("Create new pill")
         self.buttons_container.remove(self.delete_button)
 
+    def delete_pill(self):
+        self.tracker.delete_pill(self.oldPill)
+
     def on_time_edit_add_clicked(self, widget):
         time_editor = TemplateObjects.TimeEditor(self)
         self.add_time_editor(time_editor)
@@ -44,5 +47,5 @@ class PillEdit(BuilderObject.BuilderObject):
         self.window.close()
 
     def on_pill_edit_delete_clicked(self, widget):
-        warning = DeleteWarning.DeleteWarning()
+        warning = DeleteWarning.DeleteWarning(self)
         warning.window.show_all()

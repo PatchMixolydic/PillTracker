@@ -9,6 +9,9 @@ class PillFrame(BuilderObject.BuilderObject):
         self.time_tracker_container = self.builder.get_object("pill_time_track_container")
         self.tracker = tracker
         self.pill = pill
+        for time in self.pill.times:
+            time_tracker = TimeTracker(time)
+            self.time_tracker_container.add(time_tracker.checkbox)
         self.name.set_text(self.pill.name)
 
     def on_pill_edit_clicked(self, widget):
@@ -16,14 +19,17 @@ class PillFrame(BuilderObject.BuilderObject):
         pill_edit.window.show_all()
 
 class TimeTracker(BuilderObject.BuilderObject):
-    def __init__(self):
+    def __init__(self, time):
         super().__init__("time_track_template")
         self.checkbox = self.builder.get_object("time_track_checkbox")
         self.name = self.builder.get_object("time_track_name")
         self.alert = self.builder.get_object("time_track_alert")
+        self.time = time
+        self.alert.set_visible(False)
+        self.name.set_text(time.name)
 
-    def on_time_track_checkbox(self, widget):
-        NotImplemented
+    def on_time_track_checkbox_toggled(self, widget):
+        self.alert.set_visible(False)
 
 class TimeEditor(BuilderObject.BuilderObject):
     def __init__(self, pill_editor):

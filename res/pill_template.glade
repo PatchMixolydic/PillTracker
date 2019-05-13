@@ -21,6 +21,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
+            <property name="spacing">3</property>
             <child>
               <object class="GtkButton" id="pill_edit">
                 <property name="label">gtk-edit</property>

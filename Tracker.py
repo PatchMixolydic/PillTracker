@@ -1,4 +1,4 @@
-import datetime
+import datetime, sys
 from gi.repository import Gtk
 import BuilderObject, DatePicker, PillEdit, TemplateObjects
 
@@ -41,7 +41,11 @@ class Tracker(BuilderObject.BuilderObject):
         self.save_pills()
 
     def delete_pill(self, pill):
-        self.pills.remove(pill)
+        try:
+            self.pills.remove(pill)
+        except ValueError:
+            # It might have already been removed due to some race condition.
+            print("Couldn't remove pill {} from tracker.pills!".format(pill.name), file = sys.stderr)
         pillWidget = self.pill_to_widget.pop(pill, None) # Get the pill's widget, if it exists
         if pillWidget is not None: # If there was a widget, remove it
             self.pills_container.remove(pillWidget)
