@@ -2,6 +2,13 @@ import datetime, os, sys, threading, yaml
 from gi.repository import Gtk
 import BuilderObject, DatePicker, PillEdit, TemplateObjects
 
+if sys.platform == 'linux':
+    import notifications.LinuxNotifications as Notifications
+elif sys.platform == 'win32':
+    import notifications.Win32Notifications as Notifications
+else:
+    import notifications.DummyNotifications as Notifications
+
 SaveDataFilename = "savedData/pills.yaml"
 
 class Tracker(BuilderObject.BuilderObject):
@@ -101,7 +108,7 @@ class Tracker(BuilderObject.BuilderObject):
                         # uh oh!
                         if time.notifications and not time_tracker.alert.get_visible():
                             # send a notification!
-                            print("notification!")
+                            Notifications.send_notification("Pill Tracker", "It's time for your {} dose of {}!".format(time.name, pill.name))
                         if time_tracker is not None:
                             time_tracker.alert.set_visible(True)
                 else:
