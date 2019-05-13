@@ -3,10 +3,13 @@ A useful utility for tracking your medication. You can see if you've taken your
 medicine today or on any given day and recieve friendly reminders!
 
 I created this application for two reasons: first, I really needed some practice
-with GUI programming. Because of that, I decided to use GTK for this project.
+with GUI programming. Because of that, I decided to learn GTK for this project.
 Second off, I seriously needed a pill tracker so I could stop forgetting my
 medicine! I found some for mobile, but none for my Linux desktop where I spend
 most of my time.
+
+I must emphasize that this is my first time using GTK. Please, don't take this
+as the gold standard for UI programming!
 
 ## Dependencies
 Dependencies include
