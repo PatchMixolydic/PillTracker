@@ -1,6 +1,27 @@
-import collections
+import yaml
 
-class Time:
+class YAMLSafeDefaultListDict(yaml.YAMLObject):
+    yaml_tag = "!defaultdict"
+    yaml_loader = yaml.SafeLoader
+    def __init__(self):
+        self._dict = {}
+
+    def __getitem__(self, key):
+        res = self._dict.get(key, None)
+        if res is None:
+            res = set()
+            self._dict[key] = res
+        return self._dict[key]
+
+    def __setitem__(self, key, value):
+        self._dict[key] = value
+
+    def __len__(self):
+        return len(self._dict)
+
+class Time(yaml.YAMLObject):
+    yaml_tag = "!Time"
+    yaml_loader = yaml.SafeLoader
     PMOffset = 12  # hours
     def __init__(self, name, hour, minute, notifications = True):
         # hour is 24 hour representation, 0-23
@@ -8,6 +29,12 @@ class Time:
         self.hour = hour
         self.minute = minute
         self.notifications = notifications
+
+    def get_hour_minute(self):
+        """
+        :return: "hour:minute" representation
+        """
+        return "{}:{:02d}".format(self.hour, self.minute)
 
     @staticmethod
     def from_time_editor(time_editor):
@@ -22,18 +49,17 @@ class Time:
         notifications = time_editor.notification_checkbox.get_active()
         return Time(name, hour, minute, notifications)
 
-class Pill:
+class Pill(yaml.YAMLObject):
+    yaml_tag = "!Pill"
+    yaml_loader = yaml.SafeLoader
     def __init__(self, name, times):
         self.name = name
         self.times = times
-        self.dates_taken = collections.defaultdict(list) # time: [date, date, date...]
+        self.dates_taken = YAMLSafeDefaultListDict() # (hour, minute): [date, date, date...]
 
     @staticmethod
     def from_pill_editor(pill_editor):
         name = pill_editor.name_entry.get_text()
         times = list(map(Time.from_time_editor, pill_editor.time_editors))
         res = Pill(name, times)
-        if pill_editor.old_pill is not None:
-            # copy data from old pill
-            res.dates_taken = pill_editor.old_pill.dates_taken
         return res

@@ -1,6 +1,8 @@
-import datetime, sys
+import datetime, os, sys, yaml
 from gi.repository import Gtk
 import BuilderObject, DatePicker, PillEdit, TemplateObjects
+
+SaveDataFilename = "savedData/pills.yaml"
 
 class Tracker(BuilderObject.BuilderObject):
     def __init__(self):
@@ -12,6 +14,7 @@ class Tracker(BuilderObject.BuilderObject):
         self.date = None
         self.pills = []
         self.pill_to_widget = {}
+        self.load_pills()
         self.set_date(datetime.date.today())
 
     def on_tracker_window_destroy(self, widget):
@@ -37,8 +40,9 @@ class Tracker(BuilderObject.BuilderObject):
             if widget is None:
                 continue
             for time_tracker in widget.time_trackers:
-                dates_taken = pill.dates_taken[time_tracker.time]
+                dates_taken = pill.dates_taken[time_tracker.time.get_hour_minute()]
                 time_tracker.checkbox.set_active(self.date in dates_taken)
+        self.save_pills()
 
 
     def add_pill(self, pill):
@@ -64,4 +68,14 @@ class Tracker(BuilderObject.BuilderObject):
         self.save_pills()
 
     def save_pills(self):
-        print("TODO: save pills")
+        if not os.path.isdir(os.path.dirname(SaveDataFilename)):
+            os.mkdir(os.path.dirname(SaveDataFilename), 0o755)
+        with open(SaveDataFilename, 'w') as save_data:
+            yaml.dump(self.pills, save_data)
+
+    def load_pills(self):
+        if os.path.isfile(SaveDataFilename): # only try if it really exists
+            with open(SaveDataFilename, 'r') as save_data:
+                for pill in yaml.safe_load(save_data):
+                    print(pill)
+                    self.add_pill(pill)

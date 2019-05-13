@@ -10,12 +10,12 @@ class PillEdit(BuilderObject.BuilderObject):
         self.delete_button = self.builder.get_object("pill_edit_delete")
         self.buttons_container = self.builder.get_object("pill_edit_buttons_container")
         self.tracker = tracker
-        self.old_pill = pill
+        self.pill = pill
         self.time_editors = []
-        if self.old_pill is not None:
+        if self.pill is not None:
             # Populate the fields with the old values
-            self.name_entry.set_text(self.old_pill.name)
-            for time in self.old_pill.times:
+            self.name_entry.set_text(self.pill.name)
+            for time in self.pill.times:
                 time_editor = TemplateObjects.TimeEditor.from_time(time, self)
                 self.add_time_editor(time_editor)
 
@@ -25,7 +25,7 @@ class PillEdit(BuilderObject.BuilderObject):
         self.buttons_container.remove(self.delete_button)
 
     def delete_pill(self):
-        self.tracker.delete_pill(self.old_pill)
+        self.tracker.delete_pill(self.pill)
 
     def on_time_edit_add_clicked(self, widget):
         time_editor = TemplateObjects.TimeEditor(self)
@@ -37,10 +37,15 @@ class PillEdit(BuilderObject.BuilderObject):
 
     def on_pill_edit_ok_clicked(self, widget):
         newPill = PillData.Pill.from_pill_editor(self)
-        if self.old_pill is not None:
-            # Remove the old pill
-            self.tracker.delete_pill(self.old_pill)
-        self.tracker.add_pill(newPill)
+        if self.pill is not None:
+            # Update the old pill
+            widget = self.tracker.pill_to_widget.get(self.pill, None)
+            self.pill.name = newPill.name
+            self.pill.times = newPill.times
+            if widget is not None:
+                widget.setup_from_pill_values()
+        else:
+            self.tracker.add_pill(newPill)
         self.window.close()
 
     def on_pill_edit_cancel_clicked(self, widget):

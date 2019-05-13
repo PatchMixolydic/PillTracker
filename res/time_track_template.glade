@@ -29,7 +29,6 @@
         </child>
         <child>
           <object class="GtkImage" id="time_track_alert">
-            <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="stock">gtk-dialog-warning</property>
           </object>

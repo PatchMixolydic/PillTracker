@@ -10,10 +10,21 @@ class PillFrame(BuilderObject.BuilderObject):
         self.tracker = tracker
         self.pill = pill
         self.time_trackers = []
+        self.setup_from_pill_values()
+
+    def setup_from_pill_values(self):
+        # First, clear out any time trackers which may already be here
+        for time_tracker in self.time_trackers:
+            self.time_tracker_container.remove(time_tracker.checkbox)
+            time_tracker = None
+        self.time_trackers = []
+        # Now, fill in the new trackers
         for time in self.pill.times:
             time_tracker = TimeTracker(time, self.pill, self.tracker)
             self.time_tracker_container.add(time_tracker.checkbox)
             self.time_trackers.append(time_tracker)
+            dates_taken = self.pill.dates_taken[time_tracker.time.get_hour_minute()]
+            time_tracker.checkbox.set_active(self.tracker.date in dates_taken)
         self.name.set_text(self.pill.name)
 
     def on_pill_edit_clicked(self, widget):
@@ -29,18 +40,14 @@ class TimeTracker(BuilderObject.BuilderObject):
         self.time = time
         self.pill = pill
         self.tracker = tracker
-        self.alert.set_visible(False)
         self.name.set_text(self.time.name)
 
     def on_time_track_checkbox_toggled(self, widget):
         if self.checkbox.get_active():
-            self.pill.dates_taken[self.time].append(self.tracker.date)
+            self.pill.dates_taken[self.time.get_hour_minute()].add(self.tracker.date)
         else:
-            try:
-                self.pill.dates_taken[self.time].remove(self.tracker.date)
-            except ValueError:
-                # Couldn't remove date -- might not've been there in the first place?
-                pass
+            self.pill.dates_taken[self.time.get_hour_minute()].discard(self.tracker.date)
+        self.tracker.save_pills()
 
 class TimeEditor(BuilderObject.BuilderObject):
     def __init__(self, pill_editor):
