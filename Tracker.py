@@ -11,7 +11,7 @@ elif sys.platform == 'darwin':
 else:
     import notifications.DummyNotifications as Notifications
 
-SaveDataFilename = "savedData/pills.yaml"
+SaveDataFilename = "{}/savedData/pills.yaml".format(sys.path[0])
 
 class Tracker(BuilderObject.BuilderObject):
     def __init__(self):
@@ -87,7 +87,6 @@ class Tracker(BuilderObject.BuilderObject):
         if os.path.isfile(SaveDataFilename): # only try if it really exists
             with open(SaveDataFilename, 'r') as save_data:
                 for pill in yaml.safe_load(save_data):
-                    print(pill)
                     self.add_pill(pill)
 
     def time_check(self):
