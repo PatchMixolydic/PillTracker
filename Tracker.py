@@ -37,6 +37,8 @@ class Tracker(BuilderObject.BuilderObject):
 
     def on_date_menu_select_activate(self, widget):
         date_picker = DatePicker.DatePicker(self)
+        date_picker.calendar.select_month(self.date.month - 1, self.date.year)
+        date_picker.calendar.select_day(self.date.day)
         date_picker.window.show_all()
 
     def on_date_menu_today_activate(self, widget):
@@ -93,6 +95,7 @@ class Tracker(BuilderObject.BuilderObject):
         today = datetime.date.today()
         if self.date != today and today - datetime.timedelta(days = 1) == self.date:
             self.set_date(today)
+
         now = datetime.datetime.now().time()
         for pill in self.pills:
             widget = self.pill_to_widget.get(pill)
